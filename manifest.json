@@ -1,0 +1,38 @@
+{
+    "name": "Notes",
+    "description": "Notes - write your notes here",
+    "short_name": "Notes",
+    "start_url": "/",
+    "id":"/",
+    "display": "standalone",
+    "background_color": "#fff",
+    "theme_color": "#fff",
+    "orientation": "portrait-primary",
+    "icons": [
+        {
+            "src": "/icons/notes-48x48.png",
+            "type": "image/png",
+            "sizes": "48x48"
+        },
+        {
+            "src": "/icons/notes-96x96.png",
+            "type": "image/png",
+            "sizes": "96x96"
+        },
+        {
+            "src": "/icons/notes-144x144.png",
+            "type": "image/png",
+            "sizes": "144x144"
+        },
+        {
+            "src": "/icons/notes-192x192.png",
+            "type": "image/png",
+            "sizes": "192x192"
+        },
+        {
+            "src": "/icons/notes-256x256.png",
+            "type": "image/png",
+            "sizes": "256x256"
+        }
+    ]
+}

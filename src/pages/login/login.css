@@ -1,0 +1,32 @@
+.login-container {
+  /* height: 100vh; */
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-top: 60px;
+}
+
+.loginForm {
+  width: 400px;
+
+  @media screen and (max-width: 425px) {
+    max-width: 100%;
+    border: none;
+    margin-top: 60px;
+  }
+}
+
+.login-backlink {
+  padding-top: 10px;
+  color: #868686;
+  font-size: 15px;
+
+  @media screen and (max-width: 425px) {
+    font-size: 14px;
+  }
+}
+
+.backlink {
+  text-decoration: none;
+  color: var(--main-bgcolor);
+}
