@@ -13,7 +13,8 @@ import {
 const httpAuth = axios.create({
   baseURL: "https://identitytoolkit.googleapis.com/v1/",
   params: {
-    key: import.meta.env.VITE_FIREBASE_KEY,
+    key: "AIzaSyD8EEchDYE1WOA8UGjZS27zJHxQTeG85So"
+    // key: import.meta.env.VITE_FIREBASE_KEY,
   },
 });
 
