@@ -14,6 +14,8 @@ export function AuthStatus() {
     navigate("/login");
   };
 
+  console.log("auth", auth.user);
+
   if (auth.user) {
     return (
       <>

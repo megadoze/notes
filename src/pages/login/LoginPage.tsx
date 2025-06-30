@@ -46,7 +46,7 @@ function LoginPage(props) {
     if (auth.user) {
       navigate(`/notes`, { replace: true });
     }
-  }, []);
+  }, [auth.user]);
 
   const handleToggle = () => {
     toggle();
@@ -61,9 +61,6 @@ function LoginPage(props) {
   };
 
   const handleSubmit = async () => {
-    // event.preventDefault();
-    // const formData = new FormData(event.currentTarget);
-    // const username = formData.get("username");
     const user = form.values;
     try {
       type === "login" ? await auth.signIn(user) : await auth.signUp(user);
@@ -81,8 +78,7 @@ function LoginPage(props) {
         </Text>
 
         <Group grow mb="md" mt="md">
-          <GoogleButton radius="xl" >Google</GoogleButton>
-          {/* <TwitterButton radius="xl">Twitter</TwitterButton> */}
+          <GoogleButton radius="xl">Google</GoogleButton>
         </Group>
 
         <Divider

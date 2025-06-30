@@ -1,16 +1,16 @@
-import { useEffect, useRef, useState } from 'react';
-import { useLocation, useNavigate, useParams } from 'react-router-dom';
-import axios from 'axios';
-import config from '../../config.json';
-import Note from './components/Note';
-import NoteList from './components/NoteList';
-import { AuthStatus } from '../../components/AuthStatus';
-import { getAccessToken, getUserId } from '../../services/localStorage.service';
-import { useAuth } from '../../context/AuthProvider';
-import { useDisclosure } from '@mantine/hooks';
-import { Modal } from '@mantine/core';
-import './notes.css';
-import { NoteType } from '../../types/note';
+import { useEffect, useRef, useState } from "react";
+import { useLocation, useNavigate, useParams } from "react-router-dom";
+import axios from "axios";
+import config from "../../config.json";
+import Note from "./components/Note";
+import NoteList from "./components/NoteList";
+import { AuthStatus } from "../../components/AuthStatus";
+import { getAccessToken, getUserId } from "../../services/localStorage.service";
+import { useAuth } from "../../context/AuthProvider";
+import { useDisclosure } from "@mantine/hooks";
+import { Modal } from "@mantine/core";
+import "./notes.css";
+import { NoteType } from "../../types/note";
 
 const Notes = () => {
   const navigate = useNavigate();
@@ -29,7 +29,7 @@ const Notes = () => {
   const [notes, setNotes] = useState<NoteType[]>([]);
   const [isNote, setIsNote] = useState<boolean>(false);
   const [isButDisable, setIsButDisable] = useState<boolean>(false);
-  const [search, setSearch] = useState<string>('');
+  const [search, setSearch] = useState<string>("");
 
   const [sortArray, setSortArray] = useState<NoteType[]>([]);
   const [isFocus, setIsFocus] = useState<boolean>(false);
@@ -90,7 +90,7 @@ const Notes = () => {
 
   async function getNotesByUser() {
     try {
-      const { data } = await http.get(apiEndpoint + `notes/` + '.json', {
+      const { data } = await http.get(apiEndpoint + `notes/` + ".json", {
         params: {
           orderBy: `"user"`,
           equalTo: `"${localId}"`,
@@ -111,13 +111,13 @@ const Notes = () => {
             })
           : [];
       setNotes(sortArray);
-      navigate(`${localId}/${sortArray.length > 0 ? sortArray[0]._id : ''}`, {
+      navigate(`${localId}/${sortArray.length > 0 ? sortArray[0]._id : ""}`, {
         replace: true,
       });
     } catch (error: any) {
       console.log(error);
       const { code } = error;
-      if (code === 'ERR_BAD_REQUEST') {
+      if (code === "ERR_BAD_REQUEST") {
         logOut();
       }
       errorCatcher(error);
@@ -129,15 +129,15 @@ const Notes = () => {
   const handleAddNote = async () => {
     if (!localId) return; // безопасный выход, если ID нет
 
-    setSearch('');
+    setSearch("");
     setSortArray([]);
     const randomNum = Math.round(Math.random() * 10000);
 
     NoteRef.current = {
       _id: randomNum,
-      title: '',
-      description: '',
-      text: '',
+      title: "",
+      description: "",
+      text: "",
       created_at: new Date(),
       user: localId,
     };
@@ -155,7 +155,7 @@ const Notes = () => {
   async function createNote(content: NoteType): Promise<NoteType | void> {
     try {
       const { data } = await http.put(
-        apiEndpoint + 'notes/' + content._id + '.json',
+        apiEndpoint + "notes/" + content._id + ".json",
         content
       );
       setNotes((prevState) => [data, ...prevState]);
@@ -168,9 +168,9 @@ const Notes = () => {
 
   function errorCatcher(error: any): void {
     const { code, message } = error.response?.data?.error || {};
-    if (code === 400 && message === 'INVALID_LOGIN_CREDENTIALS') {
+    if (code === 400 && message === "INVALID_LOGIN_CREDENTIALS") {
       setError({
-        email: 'Email or/and password was wrong. Try again!',
+        email: "Email or/and password was wrong. Try again!",
       });
     }
   }
@@ -183,7 +183,7 @@ const Notes = () => {
 
     if (!findNote) return; // выход, если заметка не найдена
 
-    if (noteValue === '') {
+    if (noteValue === "") {
       setIsButDisable(true);
       findNote.text = noteValue;
       findNote.title = noteValue;
@@ -195,7 +195,7 @@ const Notes = () => {
 
     setIsButDisable(false);
     findNote.text = noteValue;
-    const findEnter = noteValue.indexOf('\n');
+    const findEnter = noteValue.indexOf("\n");
 
     if (findEnter > 0) {
       if (findEnter <= 40) {
@@ -218,7 +218,7 @@ const Notes = () => {
   async function updateNote(content: NoteType): Promise<NoteType | void> {
     try {
       const { data } = await http.patch(
-        apiEndpoint + 'notes/' + content._id + '.json',
+        apiEndpoint + "notes/" + content._id + ".json",
         content
       );
       return data;
@@ -230,7 +230,7 @@ const Notes = () => {
 
   async function deleteNote(id: number): Promise<void> {
     try {
-      const { data } = await http.delete(apiEndpoint + 'notes/' + id + '.json');
+      const { data } = await http.delete(apiEndpoint + "notes/" + id + ".json");
       close();
       return data;
     } catch (error) {
@@ -251,7 +251,7 @@ const Notes = () => {
     setIsButDisable(false);
     const noteData = findNote();
 
-    if (noteData?.text === '') {
+    if (noteData?.text === "") {
       setIsButDisable(true);
       if (data.from !== data.this) {
         const newArray = notes.filter((note) => note._id !== noteData._id);
@@ -277,7 +277,7 @@ const Notes = () => {
     await deleteNote(noteData._id);
 
     if (newArray.length > 0) {
-      if (search === '') {
+      if (search === "") {
         const nextItem = newArray[0]._id;
         navigate(`/notes/${localId}/${nextItem}`);
         setSortArray(newArray);
@@ -358,7 +358,7 @@ const Notes = () => {
       {!isLoading ? (
         <main className="notes-container">
           <Modal opened={opened} onClose={close} title="Delete Note" centered>
-            <p style={{ paddingBottom: '10px', color: '#353535' }}>
+            <p style={{ paddingBottom: "10px", color: "#353535" }}>
               Are you sure? Delete this Note?
             </p>
             <button className="btn-modal" onClick={handleDeleteNote}>
@@ -383,7 +383,7 @@ const Notes = () => {
                     strokeWidth="1.5"
                     stroke="currentColor"
                     className={`size-6 ${
-                      notes.length > 0 ? 'delete-icon' : 'icon-disable'
+                      notes.length > 0 ? "delete-icon" : "icon-disable"
                     }`}
                   >
                     <path
@@ -408,13 +408,13 @@ const Notes = () => {
               </div>
               <div
                 style={{
-                  display: 'flex',
-                  position: 'fixed',
-                  bottom: '0px',
-                  borderTop: '1px solid #e0e0e0',
-                  width: '100%',
-                  height: '60px',
-                  backgroundColor: 'white',
+                  display: "flex",
+                  position: "fixed",
+                  bottom: "0px",
+                  borderTop: "1px solid #e0e0e0",
+                  width: "100%",
+                  height: "60px",
+                  backgroundColor: "white",
                 }}
               >
                 <button
@@ -430,7 +430,7 @@ const Notes = () => {
                     strokeWidth={1.5}
                     stroke="currentColor"
                     className={`size-6 ${
-                      isButDisable ? 'icon-disable' : 'add-icon'
+                      isButDisable ? "icon-disable" : "add-icon"
                     }`}
                   >
                     <path
@@ -450,9 +450,9 @@ const Notes = () => {
               <header className="header">
                 <button
                   style={{
-                    marginRight: 'auto',
-                    paddingLeft: '15px',
-                    color: '#ffc123',
+                    marginRight: "auto",
+                    paddingLeft: "15px",
+                    color: "#ffc123",
                   }}
                   onClick={handleBack}
                 >
@@ -461,7 +461,7 @@ const Notes = () => {
               </header>
               <div
                 className="scroll-right"
-                style={{ paddingBottom: '70px', overflowY: 'auto' }}
+                style={{ paddingBottom: "70px", overflowY: "auto" }}
               >
                 {visibleForm()}
               </div>
@@ -487,7 +487,7 @@ const Notes = () => {
                       strokeWidth="1.5"
                       stroke="currentColor"
                       className={`size-6 ${
-                        notes.length > 0 ? 'delete-icon' : 'icon-disable'
+                        notes.length > 0 ? "delete-icon" : "icon-disable"
                       }`}
                     >
                       <path
@@ -534,7 +534,7 @@ const Notes = () => {
                       strokeWidth={1.5}
                       stroke="currentColor"
                       className={`size-6 ${
-                        isButDisable ? 'icon-disable' : ' add-icon'
+                        isButDisable ? "icon-disable" : " add-icon"
                       }`}
                     >
                       <path
@@ -553,7 +553,7 @@ const Notes = () => {
                     onFocus={() => setIsFocus(false)}
                   />
                 </header>
-                <div className="scroll-right" style={{ overflowY: 'auto' }}>
+                <div className="scroll-right" style={{ overflowY: "auto" }}>
                   {visibleForm()}
                 </div>
               </section>
@@ -561,7 +561,7 @@ const Notes = () => {
           )}
         </main>
       ) : (
-        'Loading...'
+        "Loading..."
       )}
     </>
   );

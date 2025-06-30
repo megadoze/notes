@@ -1,6 +1,6 @@
 import { Button } from "@mantine/core";
 import { useAuth } from "../context/AuthProvider";
-import { Navigate, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 
 function GoogleIcon(props) {
   return (
@@ -32,28 +32,11 @@ function GoogleIcon(props) {
 }
 export function GoogleButton(props) {
   const navigate = useNavigate();
+  const { signInWithGoogle } = useAuth();
 
-  const auth = useAuth();
-
-  const handleSubmit = () => {
-    // auth.signInWithGoogle();
-    window.location.href = "https://accounts.google.com/o/oauth2/v2/auth";
-    // navigate(
-    //   "https://accounts.google.com/o/oauth2/v2/auth",
-    //   {
-    //     client_id:
-    //       "42294321891-0kj3ks7f1o7qacmjo272qid5r2i2mldp.apps.googleusercontent.com",
-    //     client_secret: "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",
-    //     token_uri: "https://oauth2.googleapis.com/token",
-    //     redirect_uri: "http://localhost:5174/",
-    //     response_type: "token",
-    //     scope: "https://www.googleapis.com/auth/userinfo.profile",
-    //     include_granted_scopes: true,
-    //     flowName: "GeneralOAuthFlow",
-    //   }
-    //   // open("https://accounts.google.com/o/oauth2/v2/auth")
-    // );
-    // navigate(`/notes`, { replace: true });
+  const handleSubmit = async () => {
+    await signInWithGoogle();
+    navigate(`/notes`, { replace: true });
   };
 
   return (
@@ -62,6 +45,8 @@ export function GoogleButton(props) {
       leftSection={<GoogleIcon />}
       variant="default"
       {...props}
-    />
+    >
+      Sign in with Google
+    </Button>
   );
 }

@@ -1,4 +1,5 @@
 import axios from "axios";
+import { ReactNode } from "react";
 import { useMediaQuery } from "@mantine/hooks";
 import config from "../config.json";
 import { createContext, useContext, useEffect, useState } from "react";
@@ -9,12 +10,12 @@ import {
   removeAuthData,
   setTokens,
 } from "../services/localStorage.service";
+import { auth, googleProvider, signInWithPopup } from "../services/firebase";
 
 const httpAuth = axios.create({
   baseURL: "https://identitytoolkit.googleapis.com/v1/",
   params: {
-    key: "AIzaSyD8EEchDYE1WOA8UGjZS27zJHxQTeG85So"
-    // key: import.meta.env.VITE_FIREBASE_KEY,
+    key: import.meta.env.VITE_FIREBASE_API_KEY,
   },
 });
 
@@ -40,7 +41,6 @@ http.interceptors.response.use(
     return response;
   },
   function (error) {
-
     const { code } = error;
     if (code === "ERR_BAD_REQUEST") {
       removeAuthData();
@@ -50,13 +50,31 @@ http.interceptors.response.use(
   }
 );
 
-const AuthContext = createContext(null);
+interface IAuthContext {
+  user: any;
+  signUp: Function;
+  signIn: Function;
+  signInWithGoogle: Function;
+  logOut: Function;
+  error: any;
+  isMobile: boolean;
+}
+
+const AuthContext = createContext<IAuthContext | null>(null);
 
 export const useAuth = () => {
-  return useContext(AuthContext);
+  const context = useContext(AuthContext);
+  if (!context) {
+    throw new Error("useAuth must be used within an AuthProvider");
+  }
+  return context;
 };
 
-export function AuthProvider({ children }) {
+interface AuthProviderProps {
+  children: ReactNode;
+}
+
+export function AuthProvider({ children }: AuthProviderProps) {
   const navigate = useNavigate();
   const [user, setUser] = useState(null);
   const [isLoading, setLoading] = useState(true);
@@ -126,29 +144,30 @@ export function AuthProvider({ children }) {
   }
 
   async function signInWithGoogle() {
-    const url = "https://accounts.google.com/o/oauth2/v2/auth";
     try {
-      const { data } = await http.get(url, {
-        client_id:
-          "42294321891-0kj3ks7f1o7qacmjo272qid5r2i2mldp.apps.googleusercontent.com",
-        client_secret: "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",
-        token_uri: "https://oauth2.googleapis.com/token",
-        redirect_uri: "http://localhost:5174/",
-        response_type: "token",
-        scope: "https://www.googleapis.com/auth/userinfo.profile",
-        include_granted_scopes: true,
-        flowName: "GeneralOAuthFlow",
-        mode: "no-cors",
-        // cors: {
-        //   origin: "http://localhost:5174",
-        //   method: "GET",
-        //   responseHeader: "Content-Type",
-        //   maxAgeSeconds: 3600,
-        // },
-      });
-      console.log(data);
+      const result = await signInWithPopup(auth, googleProvider);
+      const user = result.user;
+      const token = await user.getIdToken();
+
+      setTokens({ idToken: token, localId: user.uid });
+
+      // Проверяем, есть ли пользователь в базе
+      const { data } = await http.get(`${apiEndpoint}users/${user.uid}.json`);
+
+      // Если нет — создаём нового
+      if (!data) {
+        await createUser({
+          _id: user.uid,
+          email: user.email,
+          name: user.email?.split("@")[0] || "user",
+        });
+      }
+
+      await getUserData();
+      setError(null);
     } catch (error) {
-      console.log(error);
+      console.error("Google Auth error:", error);
+      errorCatcher(error);
     }
   }
 
@@ -199,7 +218,7 @@ export function AuthProvider({ children }) {
         signInWithGoogle,
         logOut,
         error,
-        isMobile,
+        isMobile: isMobile ?? false,
       }}
     >
       {!isLoading ? children : "Loading..."}

@@ -1,9 +1,14 @@
-const TOKEN_KEY = "idToken";
-const REFRESH_KEY = "refreshToken";
-const EXPIRES_KEY = "expiresDate";
-const USERID_KEY = "localId";
+const TOKEN_KEY = 'idToken';
+const REFRESH_KEY = 'refreshToken';
+const EXPIRES_KEY = 'expiresDate';
+const USERID_KEY = 'localId';
 
-export function setTokens({ idToken, refreshToken, localId, expiresIn = 3600 }) {
+export function setTokens({
+  idToken,
+  refreshToken,
+  localId,
+  expiresIn = 3600,
+}) {
   const expiresDate = new Date().getTime() + expiresIn * 1000;
   localStorage.setItem(TOKEN_KEY, idToken);
   localStorage.setItem(REFRESH_KEY, refreshToken);
